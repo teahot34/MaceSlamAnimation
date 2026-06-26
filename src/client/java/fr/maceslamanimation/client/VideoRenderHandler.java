@@ -3,7 +3,7 @@ package fr.maceslamanimation.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance;
+import net.minecraft.client.resources.sounds.SimpleSoundInstance; // Le bon import nettoyé
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import fr.maceslamanimation.MaceSlamAnimation;
@@ -22,14 +22,17 @@ public class VideoRenderHandler {
         currentFrame = 0;
         lastFrameTime = System.currentTimeMillis();
 
-        // ON JOUE LE SON UNIQUEMENT POUR TOI ICI
-        Minecraft mc = Minecraft.getInstance();
-        if (mc.player != null) {
-            ResourceLocation soundLocation = ResourceLocation.fromNamespaceAndPath("maceslamanimation", "mace_impact_sound");
-            SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(soundLocation);
+        try {
+            Minecraft mc = Minecraft.getInstance();
+            if (mc.player != null) {
+                ResourceLocation soundLocation = ResourceLocation.fromNamespaceAndPath("maceslamanimation", "mace_impact_sound");
+                SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(soundLocation);
 
-            // Joue le son instantanément à l'emplacement du joueur, sans atténuation
-            mc.getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, 1.0F, 1.0F));
+                // Utilisation de .forUI(sound, pitch) qui est la méthode officielle stable
+                mc.getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, 1.0F));
+            }
+        } catch (Exception e) {
+            System.out.println("[MaceSlam] Impossible de lire le fichier audio : " + e.getMessage());
         }
     }
 
@@ -38,6 +41,7 @@ public class VideoRenderHandler {
 
         long now = System.currentTimeMillis();
 
+        // Gestion du défilement des images toutes les 33ms (~30 FPS)
         if (now - lastFrameTime >= MS_PER_FRAME) {
             currentFrame++;
             lastFrameTime = now;
@@ -48,14 +52,20 @@ public class VideoRenderHandler {
             }
         }
 
-        ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(
-                MaceSlamAnimation.MOD_ID,
-                "textures/video/frame_" + currentFrame + ".png"
-        );
+        // AFFICHAGE DES IMAGES
+        try {
+            ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(
+                    MaceSlamAnimation.MOD_ID,
+                    "textures/video/frame_" + currentFrame + ".png"
+            );
 
-        int width = context.guiWidth();
-        int height = context.guiHeight();
+            int width = context.guiWidth();
+            int height = context.guiHeight();
 
-        context.blit(RenderType::guiTextured, texture, 0, 0, 0, 0, width, height, width, height);
+            // Dessine l'image sur tout l'écran
+            context.blit(RenderType::guiTextured, texture, 0, 0, 0, 0, width, height, width, height);
+        } catch (Exception e) {
+            isPlaying = false;
+        }
     }
 }

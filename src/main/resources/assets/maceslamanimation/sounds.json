@@ -1,7 +1,5 @@
 {
   "mace_impact_sound": {
-    "category": "player",
-    "subtitle": "And his name is...",
     "sounds": [
       "maceslamanimation:john_cena"
     ]
