@@ -1,0 +1,18 @@
+{
+	"schemaVersion": 1,
+	"id": "maceslamanimation",
+	"version": "1.0.0",
+	"name": "Mace Slam Animation",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"fr.maceslamanimation.MaceSlamAnimation"
+		],
+		"client": [
+			"fr.maceslamanimation.client.MaceSlamAnimationClient"
+		]
+	},
+	"mixins": [
+		"maceslamanimation.mixins.json"
+	]
+}
