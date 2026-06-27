@@ -3,7 +3,7 @@ package fr.maceslamanimation.client;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.resources.sounds.SimpleSoundInstance; // Le bon import nettoyé
+import net.minecraft.client.resources.sounds.SimpleSoundInstance;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.sounds.SoundEvent;
 import fr.maceslamanimation.MaceSlamAnimation;
@@ -11,7 +11,7 @@ import fr.maceslamanimation.MaceSlamAnimation;
 public class VideoRenderHandler {
 
     private static boolean isPlaying = false;
-    private static int currentFrame = 0;
+    private static int currentFrame = 1;
     private static long lastFrameTime = 0;
 
     private static final int TOTAL_FRAMES = 147;
@@ -19,7 +19,7 @@ public class VideoRenderHandler {
 
     public static void startVideo() {
         isPlaying = true;
-        currentFrame = 0;
+        currentFrame = 1;
         lastFrameTime = System.currentTimeMillis();
 
         try {
@@ -28,7 +28,7 @@ public class VideoRenderHandler {
                 ResourceLocation soundLocation = ResourceLocation.fromNamespaceAndPath("maceslamanimation", "mace_impact_sound");
                 SoundEvent soundEvent = SoundEvent.createVariableRangeEvent(soundLocation);
 
-                // Utilisation de .forUI(sound, pitch) qui est la méthode officielle stable
+                // Code audio 1.21 officiel (sans erreur rouge)
                 mc.getSoundManager().play(SimpleSoundInstance.forUI(soundEvent, 1.0F));
             }
         } catch (Exception e) {
@@ -41,28 +41,28 @@ public class VideoRenderHandler {
 
         long now = System.currentTimeMillis();
 
-        // Gestion du défilement des images toutes les 33ms (~30 FPS)
         if (now - lastFrameTime >= MS_PER_FRAME) {
             currentFrame++;
             lastFrameTime = now;
 
-            if (currentFrame >= TOTAL_FRAMES) {
+            if (currentFrame > TOTAL_FRAMES) {
                 isPlaying = false;
                 return;
             }
         }
 
-        // AFFICHAGE DES IMAGES
         try {
+            // Génère automatiquement : ezgif-frame-001.png, ezgif-frame-012.png, etc.
+            String frameName = String.format("textures/video/ezgif-frame-%03d.png", currentFrame);
+
             ResourceLocation texture = ResourceLocation.fromNamespaceAndPath(
                     MaceSlamAnimation.MOD_ID,
-                    "textures/video/frame_" + currentFrame + ".png"
+                    frameName
             );
 
             int width = context.guiWidth();
             int height = context.guiHeight();
 
-            // Dessine l'image sur tout l'écran
             context.blit(RenderType::guiTextured, texture, 0, 0, 0, 0, width, height, width, height);
         } catch (Exception e) {
             isPlaying = false;

@@ -10,9 +10,13 @@
 		],
 		"client": [
 			"fr.maceslamanimation.client.MaceSlamAnimationClient"
+		],
+		"modmenu": [
+			"fr.maceslamanimation.client.ModMenuIntegration"
 		]
 	},
 	"mixins": [
-		"maceslamanimation.mixins.json"
+		"maceslamanimation.mixins.json",
+		"maceslamanimation.client.mixins.json"
 	]
 }
